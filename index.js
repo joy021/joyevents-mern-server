@@ -9,16 +9,16 @@ connectMongoDB();
 app.use(express.json());
 app.use(cookieParser());
 
-// Define a simple route for the root URL
-//app.get("/", (req, res) => {
-//  res.send("Server is running...");
-//});
+//Define a simple route for the root URL
+app.get("/", (req, res) => {
+  res.send("Server is running...");
+});
 
-app.use("/api/users", require("./routes/users-route"));
-app.use("/api/events",require("./routes/events-route"));
-app.use("/api/payments", require("./routes/payments-route"));
-app.use("/api/bookings", require("./routes/bookings-route"));
-app.use("/api/reports", require("./routes/reports-route"));
+app.use("https://joyevents-mern-server.onrender.com/api/users", require("./routes/users-route"));
+app.use("https://joyevents-mern-server.onrender.com/api/events",require("./routes/events-route"));
+app.use("https://joyevents-mern-server.onrender.com/api/payments", require("./routes/payments-route"));
+app.use("https://joyevents-mern-server.onrender.com/api/bookings", require("./routes/bookings-route"));
+app.use("https://joyevents-mern-server.onrender.com/api/reports", require("./routes/reports-route"));
 
 const port = process.env.PORT || 5000; // do not use 3000 because lots of people use 3000 port
 

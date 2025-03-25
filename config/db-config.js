@@ -10,6 +10,7 @@ const connectMongoDB = async () => {
 
 module.exports = { connectMongoDB };
 */
+
 const mongoose = require("mongoose");
 const connectMongoDB = async () => {
     try {

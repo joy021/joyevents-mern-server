@@ -151,42 +151,38 @@ router.post("/register", async (req, res) => {
 // user login
 router.post("/login", async (req, res) => {
   try {
-    //check if user exists?
-    const user = await User.findOne({ email: req.body.email });
+    const { email, password } = req.body;
+    
+    // Check if the user exists
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // check if password is correct (because in the database password will be encrypted.)
-    //from the front end you will get plain password.
-    // bcrypt.compare method plain and encrypted password
-    // both password same or not same hase toh login successfull thai jase
+    // Check if the user is blocked
+    if (user.isBlocked) {
+      return res.status(403).json({ message: "Your account has been blocked. Please contact the administrator." });
+    }
 
-    const validPassword = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
+    // Validate password
+    const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    //create and assign a token (encrypted information of user id)
-    //authorized request malse toh token ne decrypt karisu
-    //token valid hase toj front end ne response mokli su
-    // sign is use for encrypt
-    // user nu ID encrypt karisu
-    //encrption and decryption maate ek j key hovi joie
-    // (.env ma key etle mukvani chhe)
+    // Generate JWT token
+    const token = jwt.sign(
+      { _id: user._id, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "1d" }
+    );
 
-    //create and assign a token
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY); // ENCRYPT KARAVU HOY TOH SIGN METHOD NO USE THAAY CHHE
-
-    // to returning the token
-    return res.status(200).json({ token, message: "Login successfull" });
+    return res.status(200).json({ token, message: "Login successful" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 });
+
 
 //get current user
 router.get("/current-user", validateToken, async (req, res) => {
@@ -283,5 +279,7 @@ router.put("/update-profile", validateToken, async (req, res) => {
     return res.status(500).json({ message: "Server error", error });
   }
 });
+
+
 
 module.exports = router;        

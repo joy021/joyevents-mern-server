@@ -11,7 +11,7 @@ const connectMongoDB = async () => {
 module.exports = { connectMongoDB };
 */
 
-// upper original code chhe
+
 const mongoose = require("mongoose");
 const connectMongoDB = async () => {
     try {
